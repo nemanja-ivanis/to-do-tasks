@@ -1,373 +1,132 @@
 $(document).ready(function(){
-	
-	//CHECK NUMBER OF TASKS
-	/*
-	function checkTasks(list_parent){
 
-		return $(list_parent + ' li').length;	
-		
-	}
-	*/
 
 
-	var source = $("#template").html(); 
-	var template = Handlebars.compile(source); 
 
 
+    /**
+     * Handlebar helper function for if condition
+     * @param  {String} a     [first comparable parameter]
+     * @param  {String} b     [first comparable parameter]
+     * @param  {String} opts) [data when condition is true]
+     * @return {String}       [data]
+     */
+    Handlebars.registerHelper('if_eq', function (a, b, opts) {
+        if (a == b) {
+            return opts.fn(this);
+        } else {
+            return opts.inverse(this);
+        }
+    });
 
 
 
 
+    var todo = new ToDoTask();
 
 
+	todo.showTasks();
 
 
 
+	/**
+	 * [Add button click event handler,if the task value is not empty add new task to localStorage and send new task data to Handlebar for appending.Show success and failure message if new task value is empty or not.]
 
-
-	//TASK OBJECT CONSTRUCTOR
-	var todoTask=function(storage_name,storage_active,storage_completed,storage_favorited){
-
-		this.name=storage_name;
-		this.active=storage_active;
-		this.completed=storage_completed;
-		this.favorited=storage_favorited;
-
-	};
-
-
-	//var newTask=new todoTask('ime',true,false,false);
-
-
-	//console.log(newTask.name);
-	
-
-	//PULL FROM LOCAL STORAGE AND GENERATE TASKS VIEW
-	function showItems(){
-
-
-
-		for(var i=0, len=localStorage.length; i<len; i++) {
-			//PULL VALUES FROM LOCAL STORAGE
-			var key = localStorage.key(i);
-			var value = localStorage[key];
-
-			var parsed_obj=JSON.parse(value);
-
-			var task_name=parsed_obj.name;
-
-			var is_completed=parsed_obj.completed;
-
-			var is_active=parsed_obj.active;
-
-			var is_favorited=parsed_obj.favorited;
-
-			
-
-			
-
-			//CHECK DIFFERENT CONDITIONS BEFORE GENERATING TASKS VIEW
-			if(i!=0 && is_active && is_favorited){
-
-
-
-				/*
-				var item = '<li id="'+key+'">';
-				item+='<input type="checkbox">';
-				item+='<label class="favorited">'+task_name+'</label>';
-				item+='<input type="text" class="inputTask">';
-				item+='<button class="edit"><span class="glyphicon glyphicon-edit"></span></button>';
-				item+='<button class="favorite"><span class="glyphicon glyphicon-star"></span></button>';
-				item+='<button class="complete "><span class="glyphicon glyphicon-ok"></span></button>';
-				item+='<button class="delete"><span class="glyphicon glyphicon-trash"></span></button>';
-				item+='</li>';
-
-
-				$('ul#all').append(item);
-				$('ul#incomplete-tasks').append(item);
-				$('ul#favorite-tasks').append(item);
-				*/
-				var favorite_status='glyphicon-star';
-				var complete_status='';
-
-				var data = { 
-
-					task_key:key,
-					task_name:task_name,
-					favorite_status:'glyphicon-star-empty',
-					complete_status:''
-				}; 
-
-				$('#all').append(template(data));
-				$('#incomplete-tasks').append(template(data));
-				$('#favorite-tasks').append(template(data));
-
-
-
-			}else if(i!=0 && is_active){
-
-
-				/*
-				var item = '<li id="'+key+'">';
-				item+='<input type="checkbox">';
-				item+='<label>'+task_name+'</label>';
-				item+='<input type="text" class="inputTask">';
-				item+='<button class="edit"><span class="glyphicon glyphicon-edit"></span></button>';
-				item+='<button class="favorite"><span class="glyphicon glyphicon-star-empty"></span></button>';
-				item+='<button class="complete "><span class="glyphicon glyphicon-ok"></span></button>';
-				item+='<button class="delete"><span class="glyphicon glyphicon-trash"></span></button>';
-				item+='</li>';
-
-
-				$('ul#all').append(item);
-				$('ul#incomplete-tasks').append(item);
-				*/
-				var favorite_status='glyphicon-star-empty';
-				var complete_status='';
-				var data = { 
-
-					task_key:key,
-					task_name:task_name,
-					favorite_status:'glyphicon-star-empty',
-					complete_status:''
-				}; 
-				$('#all').append(template(data));
-				$('#incomplete-tasks').append(template(data));
-				$('#favorite-tasks').append(template(data));
-
-
-			}else if(i!=0 && is_completed && is_favorited){
-
-
-				/*
-				var item = '<li id="'+key+'">';
-				item+='<input type="checkbox">';
-				item+='<label class="completed favorited">'+task_name+'</label>';
-				item+='<input type="text" class="inputTask">';
-				item+='<button class="edit"><span class="glyphicon glyphicon-edit"></span></button>';
-				item+='<button class="favorite"><span class="glyphicon glyphicon-star"></span></button>';
-				item+='<button class="complete red"><span class="glyphicon glyphicon-ok"></span></button>';
-				item+='<button class="delete"><span class="glyphicon glyphicon-trash"></span></button>';
-				item+='</li>';
-
-
-				$('ul#all').append(item);
-				$('ul#completed-tasks').append(item);
-				$('ul#favorite-tasks').append(item);
-				*/
-
-				var favorite_status='glyphicon-star';
-				var complete_status='red';
-				var data = { 
-
-					task_key:key,
-					task_name:task_name,
-					favorite_status:'glyphicon-star-empty',
-					complete_status:''
-				}; 
-				$('#all').append(template(data));
-				$('#incomplete-tasks').append(template(data));
-				$('#favorite-tasks').append(template(data));
-
-
-			}else if(i!=0 && is_completed){
-
-				var favorite_status='glyphicon-star-empty';
-				var complete_status='red';
-				var data = { 
-
-					task_key:key,
-					task_name:task_name,
-					favorite_status:'glyphicon-star-empty',
-					complete_status:''
-				}; 
-				$('#all').append(template(data));
-				$('#incomplete-tasks').append(template(data));
-				$('#favorite-tasks').append(template(data));
-
-
-				/*
-				var item = '<li id="'+key+'">';
-				item+='<input type="checkbox">';
-				item+='<label class="completed">'+task_name+'</label>';
-				item+='<input type="text" class="inputTask">';
-				item+='<button class="edit"><span class="glyphicon glyphicon-edit"></span></button>';
-				item+='<button class="favorite"><span class="glyphicon glyphicon-star-empty"></span></button>';
-				item+='<button class="complete red"><span class="glyphicon glyphicon-ok"></span></button>';
-				item+='<button class="delete"><span class="glyphicon glyphicon-trash"></span></button>';
-				item+='</li>';
-
-
-				$('ul#all').append(item);
-				$('ul#completed-tasks').append(item);
-
-				*/
-
-
-			}
-
-
-
-			
-		}
-
-	}
-	//CALL FUNCTION ON DOCUMENT READY
-	showItems();
-
-
-	//STORING THE LAST INDEX OF STORAGE ITEMS
-	var index = localStorage.getItem('index');
-	if(typeof index !== 'undefined' && index !== null){
-
-		var storage_increment=localStorage.getItem('index');
-	}else{
-
-		var storage_increment=0;
-	}
-
-	console.log(storage_increment);
-
-	//ADD ITEM
+	 */
 	$('button#add').on('click',function(){
 		
 		var new_task = $('#new-task').val();
+
+
+
 		
-		if(new_task==='') {
+		if(new_task!=='') {
+
+			var index=todo.addTask(new_task);
 			
-			$('.warning').html('<i class="fa fa-warning"></i> No task added').show();
-			
-			$('.success').hide();
-		}else{
-			
+			var data = { 
+
+				key:"task-"+index,
+				task_name:new_task,
+				completed:'',
+				favorite_status:'glyphicon-star-empty',
+				complete_status:''
+			};
+
+			var template_add_new=todo.getTemplateAddNew();
+
+			$('ul#all').append(template_add_new(data));
+			$('ul#incomplete-tasks').append(template_add_new(data));
+			$('.inputTask').val(new_task);
+
 			$('.success').html('<i class="fa fa-check"></i>Task added to list').fadeIn('slow').delay(500).fadeOut();
 			
 			$('.warning').hide();
-			//INCREMENT INDEX WHEN NEW ITEM ADDED
-			storage_increment++;
-
-			localStorage.setItem('index',storage_increment);
-
-			//GENERATE THE VALUE FOR THE TASK
-			//var task_value = { 'name': new_task, 'active': true, 'completed': false,'favorited':false };
-
-			var newTaskObj=new todoTask(new_task,true,false,false);
-
-			localStorage.setItem("task-"+storage_increment, JSON.stringify(newTaskObj));
 
 
-			var data = { 
+			$('#new-task').val('');
 
-				task_key:storage_increment,
-				task_name:new_task,
-				favorite_status:'glyphicon-star-empty',
-				complete_status:''
-			}; 
-				/*
-			var new_item = '<li id="task-'+storage_increment+'">';
-			new_item+='<input type="checkbox">';
-			new_item+='<label>'+new_task+'</label>';
-			new_item+='<input type="text" class="inputTask">';
-			new_item+='<button class="edit"><span class="glyphicon glyphicon-edit"></span></button>';
-			new_item+='<button class="favorite"><span class="glyphicon glyphicon-star-empty"></span></button>';
-			new_item+='<button class="complete "><span class="glyphicon glyphicon-ok"></span></button>';
-			new_item+='<button class="delete"><span class="glyphicon glyphicon-trash"></span></button>';
-			new_item+='</li>';
-			*/
-      //APPEND TO ALL AND ACTIVE TASKS
-      $('ul#all').append(template(data));
-      $('ul#incomplete-tasks').append(template(data));
-      $('.inputTask').val(new_task);
-
-      $('#new-task').val('');
-    };
-
-		//COUNT THE TASKS INSIDE EACH SECTION
-		countTask('#counter-all','#all');
-		countTask('#counter-active','#incomplete-tasks');
-		countTask('#counter-completed','#completed-tasks');
-		countTask('#counter-favorite','#favorite-tasks');
-		/*
-		if(checkTasks('#all')>0){
-			if(!$('#delete-all').length){
-				$('#all-section').append('<button id="delete-all">Delete All</button>');
-			}
+			todo.countTasks();
+			
 			
 		}else{
 
-			$('#delete-all').remove();	
-		}
-
-		if(checkTasks('#incomplete-tasks')>0){
-			if(!$('#delete-all-active').length){
-				$('#active-section').append('<button id="delete-all-active">Delete All</button>');
-			}
+			$('.warning').html('<i class="fa fa-warning"></i> No task added').show();
 			
-		}else{
+			$('.success').hide();
+			
 
-			$('#delete-all-active').remove();	
+			
 		}
-		*/
 
+		
+		
+		
 
 
 
 	});
-	//END ADD ITEM
+	
 	
 
-	//EDIT TASK
+	/**
+	 * [Edit button click event handler,if it doesnt have class editMode on every ENTER key press update the value and localStorage,on end remove editMode class]
+	 
+	 */
 	$('ul').on('click', '.edit',function(){
 
 
 		
 		var parent = $(this).parent();
 
-
-		
 		var this_element=$(this);
 
 		var task_id=parent.attr('id');
 
-		var existing_object=localStorage.getItem(task_id);
+		
 
-		var parsed_obj=JSON.parse(existing_object);
-
-		//var task_name=parsed_obj.name;
-
-		var is_active=parsed_obj.active;
-
-		var is_completed=parsed_obj.completed;
-
-		var is_favorited=parsed_obj.favorited;
 
 		
-		if(parent.hasClass('editMode')){
-
-			parent.removeClass('editMode');
-
-		}else{
+		if(!parent.hasClass('editMode')){
 
 			parent.addClass('editMode');
 
 			
-			//ON ENTER KEY UPDATE THE VALUE
+			
 			$('.inputTask').keyup(function(e) {
 				if(e.keyCode == 13)
 				{
-					var editTask =this_element.prev('input[type="text"]').val();
-					var editLabel = parent.find('label');
+					var edited_task =this_element.prev('input[type="text"]').val();
+					var edited_label = parent.find('label');
+					var edited_label_value = parent.find('label').text();
 
-					var updatedTaskObj=new todoTask(editTask,is_active,is_completed,is_favorited);
 
-					//var updated_value = { 'name':  editTask, 'active': is_active, 'completed': is_completed,'favorited':is_favorited };
+					todo.editTask(edited_label_value,edited_task)
 
-					localStorage.setItem(task_id,JSON.stringify(updatedTaskObj));
-
-					editLabel.html(editTask);
+					edited_label.html(edited_task);
 
 					$("[id*='"+task_id+"']").each(function (i, el) {
-						$(this).find('label').text(editTask);
+						$(this).find('label').text(edited_task);
 					});
 
 
@@ -376,115 +135,86 @@ $(document).ready(function(){
 					parent.removeClass('editMode');
 				}
 			});
-			
+
 			
 
+		}else{
+
+			
+			
+			
+			parent.removeClass('editMode');
 
 		}
 
 
 
-		
-
-
-			//remove edit class
-			//parent.removeClass('editMode');
-
-
-		});
-	//END EDIT TASK
+	});
+	
 
 
 
-	//COMPLETE TASK
+	/**
+	 * [Complete button event handler,if sibling label has completed class deny usage of the button,if not call completeTask function and update the completed value with it.Change all other elements with the same id.Remove active element changed to completed.]
+	
+	 */
 	$('ul').on('click','.complete', function(){
 
 		if($(this).siblings('label').attr('class')=='completed'){
 			alert('The task is already completed!');
-
-		}else{
-
-			var this_element=$(this).parent();
-
-			var task_id=$(this).parent().attr('id');
-
-			var existing_object=localStorage.getItem(task_id);
-
-			var parsed_obj=JSON.parse(existing_object);
-
-			var task_name=parsed_obj.name;
-
-			var is_active=parsed_obj.active;
-
-			var is_completed=parsed_obj.completed;
-
-			var is_favorited=parsed_obj.favorited;
-
-			var updatedTaskObj=new todoTask(task_name,false,true,is_favorited);
-
-			//var updated_value = { 'name':  task_name, 'active': false, 'completed': true,'favorited':is_favorited };
-
-			localStorage.setItem(task_id,JSON.stringify(updatedTaskObj));
-
-			$(this).siblings('label').addClass('completed');
-
-			var task_from_all=$('#all #'+task_id+' label');
-
-			if(!task_from_all.hasClass('completed')){
-
-				task_from_all.addClass('completed');	
-			}
-
-			$('#incomplete-tasks #'+task_id).remove();
-			$('#completed-tasks').append(this_element.clone());
-
-			$("[id*='"+task_id+"']").each(function (i, el) {
-				$(this).find('.complete').addClass('red');
-				
-			});
-
-			countTask('#counter-all','#all');
-			countTask('#counter-active','#incomplete-tasks');
-			countTask('#counter-completed','#completed-tasks');
-			countTask('#counter-favorite','#favorite-tasks');
-
+			return false;
 		}
 
-		
+		var this_element=$(this).parent();
+
+		var task_id=$(this).parent().attr('id');
+
+		var name=$(this).siblings('label').text();
+
+		todo.completeTask(name);
+
+		$(this).siblings('label').addClass('completed');
+
+		var task_from_all=$('#all #'+task_id+' label');
+
+		if(!task_from_all.hasClass('completed')){
+
+			task_from_all.addClass('completed');	
+		}
+
+		$('#incomplete-tasks #'+task_id).remove();
+		$('#completed-tasks').append(this_element.clone());
+
+		$("[id*='"+task_id+"']").each(function (i, el) {
+			$(this).find('.complete').addClass('red');
+
+		});
+
+		todo.countTasks();
+	
 	});
-	//END COMPLETE TASK
+	
 	
 
 
-	//FAVORITE TASK
+	/**
+	 * [Favorite button event handler,if it has class favorited deny usage of the button.If not call favoriteTask function and update the favorited value with it.Change all other elements with the same id.]
+
+	 */
 	$('ul').on('click','.favorite', function(){
 
 		if($(this).siblings('label').hasClass('favorited')){
 			alert('The task is already favorited!');
 
-		}else{
+		}
 
 			var this_element=$(this).parent();
 
 			var task_id=$(this).parent().attr('id');
 
-			var existing_object=localStorage.getItem(task_id);
+			var name=$(this).siblings('label').text();
 
-			var parsed_obj=JSON.parse(existing_object);
-
-			var task_name=parsed_obj.name;
-
-			var is_active=parsed_obj.active;
-
-			var is_completed=parsed_obj.completed;
-
-			var is_favorited=parsed_obj.favorited;
-
-			var updatedTaskObj=new todoTask(task_name,is_active,is_completed,true);
-
-			//var updated_value = { 'name':  task_name, 'active': is_active, 'completed': is_completed,'favorited':true };
-
-			localStorage.setItem(task_id,JSON.stringify(updatedTaskObj));
+			todo.favoriteTask(name);
 
 			$(this).siblings('label').addClass('favorited');
 
@@ -505,82 +235,62 @@ $(document).ready(function(){
 			});
 
 
-			countTask('#counter-all','#all');
-			countTask('#counter-active','#incomplete-tasks');
-			countTask('#counter-completed','#completed-tasks');
-			countTask('#counter-favorite','#favorite-tasks');
-
-		}
+			todo.countTasks();
+		
 
 		
 	});
-	//END FAVORITE TASK
+	
 
 	
-	//DELETE TASK
+	/**
+	 * [Delete button event handler,on click call removeTask() function and remove every element with the same id]
+	
+	 */
 	$('ul').on('click','.delete',function(){
-		var task_name=$(this).parent().attr('id');
-		localStorage.removeItem(task_name);
 
-		$(this).parent().remove();
+		var task_id=$(this).parent().attr('id');
+		var name=$(this).siblings('label').text();
+
+		todo.removeTask(name);
 
 
 		if ($('#all').has($(this).length)) {
-			$("[id*='"+task_name+"']").each(function (i, el) {
+			$("[id*='"+task_id+"']").each(function (i, el) {
 				el.remove();
 			});
 		}
-		
 
-		
-
-		countTask('#counter-all','#all');
-		countTask('#counter-active','#incomplete-tasks');
-		countTask('#counter-completed','#completed-tasks');
-		countTask('#counter-favorite','#favorite-tasks');
+		todo.countTasks();
 	});
-	//END DELETE TASK
+	
 
 
 
+	/**
+	 * [All button event handler,on click remove all elements from dom and localStorage]
 
-
-	//TASK COUNTER
-	function countTask(counter_selector,list_parent){
-		var remainTask = $(list_parent + ' li').length;
-		$(counter_selector).hide().fadeIn(300).html(remainTask);
-	};
-	//END TASK COUNTER
-
-
-	//CALL FUNCTION ON DOCUMENT READY
-	countTask('#counter-all','#all');
-	countTask('#counter-active','#incomplete-tasks');
-	countTask('#counter-completed','#completed-tasks');
-	countTask('#counter-favorite','#favorite-tasks');
-
-
-
-	//REMOVE ALL
+	 */
 	$('#all-buttons').on('click','#remove-all',function(){
+
+
+		todo.removeAllTasks();
 
 		$('#all').empty();
 		$('#incomplete-tasks').empty();
 		$('#completed-tasks').empty();
 		$('#favorite-tasks').empty();
 
-		localStorage.clear();
-
-		countTask('#counter-all','#all');
-		countTask('#counter-active','#incomplete-tasks');
-		countTask('#counter-completed','#completed-tasks');
-		countTask('#counter-favorite','#favorite-tasks');
+		todo.countTasks();
 
 
 	});
-	//END REMOVE ALL
+	
 
-	//REMOVE SELECTED
+	/**
+	 * [Remove selected event handler,on click remove all elements from dom and localStorage with checked attribute]
+	
+	 */
 	$('#all-buttons').on('click','#remove-selected',function(){
 
 		$('#all input[type="checkbox"]').each(function (i, el) {
@@ -588,26 +298,23 @@ $(document).ready(function(){
 			if($(this).is(':checked')){
 
 				var task_id=$(this).parent().attr('id');
-				$(this).parent().remove();
+				var name=$(this).siblings('label').text();
 
+				todo.removeTask(name);
 				$("[id*='"+task_id+"']").each(function (i, el) {
 					el.remove();
 				});
 
-				localStorage.removeItem(task_id);
+				
 
 			}
 
-		});	
+		});
 
-		countTask('#counter-all','#all');
-		countTask('#counter-active','#incomplete-tasks');
-		countTask('#counter-completed','#completed-tasks');
-		countTask('#counter-favorite','#favorite-tasks');
+		todo.countTasks();
 
 
 	});
-	//END REMOVE SELECTED
-
-
-});//END DOM READY
+	
+	
+});

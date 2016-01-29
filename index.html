@@ -5,7 +5,7 @@
   <title>Todo App</title>
   <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="css/style.css" type="text/css" media="screen" charset="utf-8">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" type="text/css" media="screen" charset="utf-8">
+  <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" media="screen" charset="utf-8">
 
   
 
@@ -35,17 +35,7 @@
       <h3>All
         <span id="counter-all"></span></h3>
         <ul id="all">
-          <script id="template" type="text/x-handlebars-template"> 
-            <li id="{{task_key}}">
-              <input type="checkbox">
-              <label class="">{{task_name}}</label>
-              <input type="text" class="inputTask">
-              <button class="edit"><span class="glyphicon glyphicon-edit"></span></button>
-              <button class="favorite"><span class="glyphicon {{favorite_status}}"></span></button>
-              <button class="complete {complete_status}}"><span class="glyphicon glyphicon-ok"></span></button>
-              <button class="delete"><span class="glyphicon glyphicon-trash"></span></button>
-            </li>
-          </script>
+          
 
         </ul>
         <div id="all-buttons">
@@ -63,17 +53,7 @@
         <h3>Active
           <span id="counter-active"></span></h3>
           <ul id="incomplete-tasks">
-            <script id="template" type="text/x-handlebars-template"> 
-              <li id="{{task_key}}">
-                <input type="checkbox">
-                <label class="">{{task_name}}</label>
-                <input type="text" class="inputTask">
-                <button class="edit"><span class="glyphicon glyphicon-edit"></span></button>
-                <button class="favorite"><span class="glyphicon {{favorite_status}}"></span></button>
-                <button class="complete {complete_status}}"><span class="glyphicon glyphicon-ok"></span></button>
-                <button class="delete"><span class="glyphicon glyphicon-trash"></span></button>
-              </li>
-            </script>
+           
 
           </ul>
         </div>
@@ -83,17 +63,7 @@
         <div class="task-section col-md-3" id="completed-section">
           <h3>Completed<span id="counter-completed"></span></h3>
           <ul id="completed-tasks">
-            <script id="template" type="text/x-handlebars-template"> 
-              <li id="{{task_key}}">
-                <input type="checkbox">
-                <label class="">{{task_name}}</label>
-                <input type="text" class="inputTask">
-                <button class="edit"><span class="glyphicon glyphicon-edit"></span></button>
-                <button class="favorite"><span class="glyphicon {{favorite_status}}"></span></button>
-                <button class="complete {complete_status}}"><span class="glyphicon glyphicon-ok"></span></button>
-                <button class="delete"><span class="glyphicon glyphicon-trash"></span></button>
-              </li>
-            </script>
+            
           </ul>
         </div>
         <!--end Completed tasks section-->
@@ -101,28 +71,241 @@
         <!--Favorite tasks section-->
         <div class="task-section col-md-3" id="favorite-section">
           <h3>Favorite<span id="counter-favorite"></span></h3>
-          <ul id="favorite-tasks">
-            <script id="template" type="text/x-handlebars-template"> 
-              <li id="{{task_key}}">
-                <input type="checkbox">
-                <label class="">{{task_name}}</label>
-                <input type="text" class="inputTask">
-                <button class="edit"><span class="glyphicon glyphicon-edit"></span></button>
-                <button class="favorite"><span class="glyphicon {{favorite_status}}"></span></button>
-                <button class="complete {complete_status}}"><span class="glyphicon glyphicon-ok"></span></button>
-                <button class="delete"><span class="glyphicon glyphicon-trash"></span></button>
-              </li>
-            </script>
-          </ul>
+           <ul id="favorite-tasks">  
+           </ul>
+          
         </div>
         <!--end Favorite tasks section-->
 
       </div>
       <script src='js/jquery.js'></script>
 
-      <script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'></script>
+      <script src='js/bootstrap.min.js'></script>
       <script type="text/javascript" src="js/handlebars-1.0.rc.2.js"></script>
+        <script src="js/todoTaskClass.js"></script>
       <script src="js/index.js"></script>
+
+      <script id="template-add-new" type="text/x-handlebars-template">
+
+      <li id="{{key}}">
+              <input type="checkbox">
+              <label class="{{completed}}">{{task_name}}</label>
+              <input type="text" class="inputTask">
+              <button class="edit" data-toggle="tooltip" title="Edit"><span class="glyphicon glyphicon-edit"></span></button>
+              <button class="favorite" data-toggle="tooltip" title="Favorite"><span class="glyphicon {{favorite_status}}"></span></button>
+              <button class="complete {{complete_status}}" data-toggle="tooltip" title="Complete"><span class="glyphicon glyphicon-ok"></span></button>
+              <button class="delete" data-toggle="tooltip" title="Delete"><span class="glyphicon glyphicon-trash"></span></button>
+            </li>
+
+      </script>
+
+      <script id="template-all" type="text/x-handlebars-template">
+
+        
+    
+   {{#each .}}
+
+   {{#if_eq active true }}
+
+    {{#if_eq favorited false }}
+
+        {{#if_eq completed false }}
+          <li id="task-{{@index}}">
+              <input type="checkbox">
+              <label class="">{{name}}</label>
+              <input type="text" class="inputTask">
+              <button class="edit" data-toggle="tooltip" title="Edit"><span class="glyphicon glyphicon-edit"></span></button>
+              <button class="favorite" data-toggle="tooltip" title="Favorite"><span class="glyphicon glyphicon-star-empty"></span></button>
+              <button class="complete" data-toggle="tooltip" title="Complete"><span class="glyphicon glyphicon-ok"></span></button>
+              <button class="delete" data-toggle="tooltip" title="Delete"><span class="glyphicon glyphicon-trash"></span></button>
+            </li>
+
+            {{/if_eq}}
+  {{/if_eq}}
+  {{/if_eq}}
+
+
+   {{#if_eq active true }}
+
+    {{#if_eq favorited true }}
+          <li id="task-{{@index}}">
+              <input type="checkbox">
+              <label class="">{{name}}</label>
+              <input type="text" class="inputTask">
+              <button class="edit" data-toggle="tooltip" title="Edit"><span class="glyphicon glyphicon-edit"></span></button>
+              <button class="favorite" data-toggle="tooltip" title="Favorite"><span class="glyphicon glyphicon-star"></span></button>
+              <button class="complete" data-toggle="tooltip" title="Complete"><span class="glyphicon glyphicon-ok"></span></button>
+              <button class="delete" data-toggle="tooltip" title="Delete"><span class="glyphicon glyphicon-trash"></span></button>
+            </li>
+  {{/if_eq}}
+  {{/if_eq}}
+
+
+  {{#if_eq completed true }}
+
+    {{#if_eq favorited false }}
+          <li id="task-{{@index}}">
+              <input type="checkbox">
+              <label class="completed">{{name}}</label>
+              <input type="text" class="inputTask">
+              <button class="edit" data-toggle="tooltip" title="Edit"><span class="glyphicon glyphicon-edit"></span></button>
+              <button class="favorite" data-toggle="tooltip" title="Favorite"><span class="glyphicon glyphicon-star-empty"></span></button>
+              <button class="complete red" data-toggle="tooltip" title="Complete"><span class="glyphicon glyphicon-ok"></span></button>
+              <button class="delete" data-toggle="tooltip" title="Delete"><span class="glyphicon glyphicon-trash"></span></button>
+            </li>
+  {{/if_eq}}
+  {{/if_eq}}
+
+
+  {{#if_eq completed true }}
+
+    {{#if_eq favorited true }}
+          <li id="task-{{@index}}">
+              <input type="checkbox">
+              <label class="completed">{{name}}</label>
+              <input type="text" class="inputTask">
+              <button class="edit" data-toggle="tooltip" title="Edit"><span class="glyphicon glyphicon-edit"></span></button>
+              <button class="favorite" data-toggle="tooltip" title="Favorite"><span class="glyphicon glyphicon-star"></span></button>
+              <button class="complete red" data-toggle="tooltip" title="Complete"><span class="glyphicon glyphicon-ok"></span></button>
+              <button class="delete" data-toggle="tooltip" title="Delete"><span class="glyphicon glyphicon-trash"></span></button>
+            </li>
+  {{/if_eq}}
+  {{/if_eq}}
+
+ 
+  {{/each}}
+
+           
+
+
+      
+         
+           
+          
+      </script>
+
+   <script id="template-active" type="text/x-handlebars-template"> 
+
+      {{#each .}}
+
+   {{#if_eq active true }}
+
+    {{#if_eq favorited false }}
+
+        {{#if_eq completed false }}
+          <li id="task-{{@index}}">
+              <input type="checkbox">
+              <label class="">{{name}}</label>
+              <input type="text" class="inputTask">
+              <button class="edit" data-toggle="tooltip" title="Edit"><span class="glyphicon glyphicon-edit"></span></button>
+              <button class="favorite" data-toggle="tooltip" title="Favorite"><span class="glyphicon glyphicon-star-empty"></span></button>
+              <button class="complete" data-toggle="tooltip" title="Complete"><span class="glyphicon glyphicon-ok"></span></button>
+              <button class="delete" data-toggle="tooltip" title="Delete"><span class="glyphicon glyphicon-trash"></span></button>
+            </li>
+
+            {{/if_eq}}
+  {{/if_eq}}
+  {{/if_eq}}
+
+
+   {{#if_eq active true }}
+
+    {{#if_eq favorited true }}
+          <li id="task-{{@index}}">
+              <input type="checkbox">
+              <label class="">{{name}}</label>
+              <input type="text" class="inputTask">
+              <button class="edit" data-toggle="tooltip" title="Edit"><span class="glyphicon glyphicon-edit"></span></button>
+              <button class="favorite" data-toggle="tooltip" title="Favorite"><span class="glyphicon glyphicon-star"></span></button>
+              <button class="complete" data-toggle="tooltip" title="Complete"><span class="glyphicon glyphicon-ok"></span></button>
+              <button class="delete" data-toggle="tooltip" title="Delete"><span class="glyphicon glyphicon-trash"></span></button>
+            </li>
+  {{/if_eq}}
+  {{/if_eq}}
+
+
+   {{/each}}
+
+
+   </script>
+
+   <script id="template-favorited" type="text/x-handlebars-template">
+
+ {{#each .}}
+   {{#if_eq active true }}
+
+    {{#if_eq favorited true }}
+          <li id="task-{{@index}}">
+              <input type="checkbox">
+              <label class="">{{name}}</label>
+              <input type="text" class="inputTask">
+              <button class="edit" data-toggle="tooltip" title="Edit"><span class="glyphicon glyphicon-edit"></span></button>
+              <button class="favorite" data-toggle="tooltip" title="Favorite"><span class="glyphicon glyphicon-star"></span></button>
+              <button class="complete" data-toggle="tooltip" title="Complete"><span class="glyphicon glyphicon-ok"></span></button>
+              <button class="delete" data-toggle="tooltip" title="Delete"><span class="glyphicon glyphicon-trash"></span></button>
+            </li>
+  {{/if_eq}}
+  {{/if_eq}}
+
+
+  {{#if_eq completed true }}
+
+    {{#if_eq favorited true }}
+          <li id="task-{{@index}}">
+              <input type="checkbox">
+              <label class="completed">{{name}}</label>
+              <input type="text" class="inputTask">
+              <button class="edit" data-toggle="tooltip" title="Edit"><span class="glyphicon glyphicon-edit"></span></button>
+              <button class="favorite" data-toggle="tooltip" title="Favorite"><span class="glyphicon glyphicon-star"></span></button>
+              <button class="complete red" data-toggle="tooltip" title="Complete"><span class="glyphicon glyphicon-ok"></span></button>
+              <button class="delete" data-toggle="tooltip" title="Delete"><span class="glyphicon glyphicon-trash"></span></button>
+            </li>
+  {{/if_eq}}
+  {{/if_eq}}
+
+
+{{/each}}
+   </script>
+
+   <script id="template-completed" type="text/x-handlebars-template">
+{{#each .}}
+   {{#if_eq completed true }}
+
+    {{#if_eq favorited true }}
+          <li id="task-{{@index}}">
+              <input type="checkbox">
+              <label class="completed">{{name}}</label>
+              <input type="text" class="inputTask">
+              <button class="edit" data-toggle="tooltip" title="Edit"><span class="glyphicon glyphicon-edit"></span></button>
+              <button class="favorite" data-toggle="tooltip" title="Favorite"><span class="glyphicon glyphicon-star"></span></button>
+              <button class="complete red" data-toggle="tooltip" title="Complete"><span class="glyphicon glyphicon-ok"></span></button>
+              <button class="delete" data-toggle="tooltip" title="Delete"><span class="glyphicon glyphicon-trash"></span></button>
+            </li>
+  {{/if_eq}}
+  {{/if_eq}}
+
+
+  {{#if_eq completed true }}
+
+    {{#if_eq favorited false }}
+
+    {{#if_eq active false }}
+          <li id="task-{{@index}}">
+              <input type="checkbox">
+              <label class="completed">{{name}}</label>
+              <input type="text" class="inputTask">
+              <button class="edit" data-toggle="tooltip" title="Edit"><span class="glyphicon glyphicon-edit"></span></button>
+              <button class="favorite" data-toggle="tooltip" title="Favorite"><span class="glyphicon glyphicon-star-empty"></span></button>
+              <button class="complete red" data-toggle="tooltip" title="Complete"><span class="glyphicon glyphicon-ok"></span></button>
+              <button class="delete" data-toggle="tooltip" title="Delete"><span class="glyphicon glyphicon-trash"></span></button>
+            </li>
+
+             {{/if_eq}}
+  {{/if_eq}}
+  {{/if_eq}}
+{{/each}}
+   </script>
+          
     </body>
 
     </html>

@@ -155,7 +155,7 @@ ul li.editMode label {
 
 .favorite{
 
-  color:yellow;
+  color:#FFDE00;
 }
 
 .complete{
@@ -248,11 +248,11 @@ ul li.editMode label {
 
 #favorite-section h3{
 
-  color:yellow;
-  border-bottom: 2px solid yellow;
+  color:#FFDE00;
+  border-bottom: 2px solid #FFDE00;
 }
 
 #counter-favorite{
 
-  background-color:yellow;
+  background-color:#FFDE00;
 }
